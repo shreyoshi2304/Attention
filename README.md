@@ -22,13 +22,12 @@ In this project, I develop a series of computational models to explore attention
 ### 1. Gain Modulation Model
 
 We begin with a minimal model in which attention acts as a **multiplicative gain** on sensory input:
-[
-r(t) = g \cdot s(t) + \eta(t)
-]
 
-* (s(t)): stimulus
-* (g): attention gain
-* (\eta(t)): noise
+`r(t) = g * s(t) + η(t)`
+
+* `s(t)` = stimulus
+* `g` = attention gain
+* `η(t)` = noise
 
 **Result:**
 Attention increases the signal-to-noise ratio (SNR), improving encoding fidelity.
@@ -38,14 +37,12 @@ Attention increases the signal-to-noise ratio (SNR), improving encoding fidelity
 ### 2. Population Coding with Attention
 
 We extend the model to a population of neurons with Gaussian tuning curves:
-[
-r_i(x) = \exp\left(-\frac{(x - \mu_i)^2}{2\sigma^2}\right)
-]
+
+`r_i(x) = exp(-(x - μ_i)^2 / (2σ^2))`
 
 Attention selectively enhances neurons tuned to a target stimulus:
-[
-r_i^{att}(x) = A_i \cdot r_i(x)
-]
+
+`r_i_att(x) = A_i * r_i(x)`
 
 **Result:**
 Attention sharpens population responses, effectively increasing representational precision.
@@ -54,7 +51,9 @@ Attention sharpens population responses, effectively increasing representational
 
 ### 3. Competitive Network (Selection Mechanism)
 
-We model attention as a result of **competition between neural populations**, implemented via softmax and dynamical inhibition.
+We model attention as a result of **competition between neural populations**, implemented via softmax-like normalization:
+
+`x_i = exp(β * I_i) / Σ_j exp(β * I_j)`
 
 **Key idea:**
 Attention biases competition, allowing one representation to dominate.
@@ -67,16 +66,12 @@ Small biases in input lead to strong selection effects, consistent with winner-t
 ### 4. Temporal (Dynamical) Attention Model
 
 We model attention as a **time-varying control signal**:
-[
-r(t) = A(t) \cdot s(t) + \eta(t)
-]
 
-where (A(t)) evolves over time.
+`r(t) = A(t) * s(t) + η(t)`
 
 We further incorporate temporal integration:
-[
-\tau \frac{dV}{dt} = -V + A(t)s(t)
-]
+
+`τ * dV/dt = -V + A(t) * s(t)`
 
 **Result:**
 Attention dynamically gates input, shaping:
@@ -87,12 +82,30 @@ Attention dynamically gates input, shaping:
 
 ---
 
-## Key Results
+### 5. Tripartite Synapse Model (Neuron–Astrocyte Interaction)
 
-* Attention improves signal-to-noise ratio through gain modulation
-* Population-level effects reveal sharpening of stimulus representations
-* Competitive dynamics provide a mechanism for selective attention
-* Temporal modulation suggests attention acts as a **control parameter in neural dynamics**, rather than a static multiplier
+To incorporate biological realism, we extend the framework to a **tripartite synapse**, where astrocytes modulate synaptic transmission.
+
+Astrocytic calcium dynamics:
+
+`τ_c * dC/dt = -C + S(t)`
+
+Astrocyte activity:
+
+`τ_a * dA_astro/dt = -A_astro + C(t)`
+
+Postsynaptic response with attention-modulated astrocytic input:
+
+`τ * dV/dt = -V + w_s * S(t) + w_a * A(t) * A_astro(t)`
+
+* `S(t)` = presynaptic input
+* `C(t)` = astrocytic calcium
+* `A_astro(t)` = astrocyte activity
+* `A(t)` = attention signal
+* `w_s, w_a` = synaptic weights
+
+**Result:**
+Astrocyte-mediated modulation introduces a slower timescale that stabilizes neural responses and reduces variability.
 
 ---
 
@@ -100,32 +113,14 @@ Attention dynamically gates input, shaping:
 
 Across all models, attention emerges not as a single mechanism, but as a **unifying dynamical principle**:
 
-> Attention can be interpreted as a control signal that shapes neural dynamics across multiple scales — from single neurons to populations to recurrent networks.
+> Attention acts as a control signal that shapes neural dynamics across multiple scales — from single neurons to populations to neuron–glia interactions.
 
 ---
 
-## Repository Structure
 
-attention-models/
-├── gain_modulation.py
-├── population_attention.py
-├── competitive_network.py
-├── temporal_attention.py
-
----
-
-## Future Directions
-
-* Incorporating stochastic attention fluctuations
-* Linking to recurrent neural networks and learned attention mechanisms
-* Connecting variability modulation to experimental observables (e.g., Fano factor)
-* Extending to biologically realistic spiking networks
-
----
 
 ## Motivation
 
 This project is motivated by a broader interest in understanding how **neural dynamics give rise to computation, variability, and temporal processing** in the brain.
 
----
 
